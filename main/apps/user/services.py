@@ -1,4 +1,4 @@
-from test_proj.main.apps.user.repositories import UserRepository
+from main.apps.user.repositories import UserRepository
 from rest_framework import serializers
 
 

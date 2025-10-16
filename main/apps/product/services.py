@@ -1,28 +1,35 @@
-from test_proj.main.apps.product.repositories import ProductRepository
-
+from main.apps.product.repositories import ProductRepository
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ProductService:
-    @staticmethod
-    def list_product():
-        return ProductRepository.get_all()
+    def __init__(self):
+        self.repo = ProductRepository()
+
+    def list_product(self):
+        return self.repo.get_all()
     
 
-    @staticmethod
-    def retrieve_product(product_id):
-        return ProductRepository.get_by_id(product_id)
+    def retrieve_product(self, product_id):
+        product = self.repo.get_by_id(product_id)
+        if not product:
+            raise ObjectDoesNotExist("Product not found")
+        return product
     
 
-    @staticmethod
-    def create_product(validated_data):
-        return ProductRepository.create(**validated_data)
+    def create_product(self, validated_data):
+        return self.repo.create(**validated_data)
     
 
-    @staticmethod
-    def update_product(product, validated_data):
-        return ProductRepository.update(product, **validated_data)
-    
-    
-    @staticmethod
-    def delete_product(product):
-        return ProductRepository.delete(product)
+    def update_product(self, product_id, validated_data):
+        product = self.repo.get_by_id(product_id)
+        if not product:
+            raise ObjectDoesNotExist("Product not found")
+        return self.repo.update(product, **validated_data)
+
+    def delete_product(self, product_id):
+        product = self.repo.get_by_id(product_id)
+        if not product:
+            raise ObjectDoesNotExist("Product not found")
+        self.repo.delete(product)
+        return True

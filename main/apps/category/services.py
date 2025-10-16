@@ -1,24 +1,29 @@
-from test_proj.main.apps.category.repositories import CategoryRepository
-
+from main.apps.category.repositories import CategoryRepository
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CategoryService:
-    @staticmethod
-    def list_categories():
-        return CategoryRepository.get_all()
+    def __init__(self):
+        self.repo = CategoryRepository()
+
+    def list_categories(self):
+        return self.repo.get_all()
     
-    @staticmethod
-    def retrieve_category(category_id):
-        return CategoryRepository.get_by_id(category_id)
+    def retrieve_category(self, category_id):
+        return self.repo.get_by_id(category_id)
     
-    @staticmethod
-    def create_category(validated_data):
-        return CategoryRepository.create(**validated_data)
+    def create_category(self, validated_data):
+        return self.repo.create(**validated_data)
     
-    @staticmethod
-    def update_category(category, validated_data):
-        return CategoryRepository.update(category, **validated_data)
-    
-    @staticmethod
-    def delete_category(category):
-        return CategoryRepository.delete(category)
+    def update_category(self, product_id, validated_data):
+        product = self.repo.get_by_id(product_id)
+        if not product:
+            raise ObjectDoesNotExist("Product not found")
+        return self.repo.update(product, **validated_data)
+
+    def delete_category(self, product_id):
+        product = self.repo.get_by_id(product_id)
+        if not product:
+            raise ObjectDoesNotExist("Product not found")
+        self.repo.delete(product)
+        return True
